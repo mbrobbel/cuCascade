@@ -23,7 +23,7 @@ ninja = "*"
 sccache = "*"
 unzip = "*"
 
-libcudf = "25.10.*"
+libcudf = "25.12.*"
 libcurand-dev = "*"
 pre-commit = "*"
 fmt = "*"

@@ -32,7 +32,7 @@
 
 #include <rmm/detail/error.hpp>
 #include <rmm/cuda_stream_view.hpp>
-#include <rmm/mr/device/cuda_memory_resource.hpp>
+#include <rmm/mr/cuda_memory_resource.hpp>
 
 #include <cuda_runtime_api.h>
 
@@ -90,6 +90,11 @@ struct mock_memory_space_holder {
     : space{make_mock_memory_space(tier, device_id)}
   {
   }
+
+  explicit mock_memory_space_holder(std::shared_ptr<memory::memory_space> existing_space)
+    : space{std::move(existing_space)}
+  {
+  }
 };
 
 /**
@@ -106,6 +111,18 @@ class mock_data_representation : private mock_memory_space_holder, public idata_
       idata_representation(*space)  // Pass reference to base class
       ,
       _size(size)
+  {
+  }
+
+  /**
+   * @brief Construct with an existing memory_space (avoids creating new CUDA resources).
+   *
+   * Use this constructor when creating many mock representations to avoid exhausting
+   * CUDA resources like streams.
+   */
+  explicit mock_data_representation(std::shared_ptr<memory::memory_space> existing_space,
+                                    size_t size = 1024)
+    : mock_memory_space_holder(std::move(existing_space)), idata_representation(*space), _size(size)
   {
   }
 

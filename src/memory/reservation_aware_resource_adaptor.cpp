@@ -434,7 +434,7 @@ void* reservation_aware_resource_adaptor::do_allocate_unmanaged(std::size_t allo
   if (success) {
     _peak_total_allocated_bytes.update_peak(post_allocation_size);
     try {
-      return _upstream.allocate_async(allocation_bytes, stream);
+      return _upstream.allocate(stream, allocation_bytes);
     } catch (std::exception& e) {
       _total_allocated_bytes.sub(tracking_bytes);
       throw cucascade_out_of_memory(e.what(), allocation_bytes, post_allocation_size);
@@ -467,7 +467,7 @@ void reservation_aware_resource_adaptor::do_deallocate(void* ptr,
         static_cast<std::size_t>(reservation_size - post_deallocation_size);
     }
   }
-  _upstream.deallocate_async(ptr, bytes, stream);
+  _upstream.deallocate(stream, ptr, bytes);
   _total_allocated_bytes.sub(upstream_reclaimed_bytes);
 }
 

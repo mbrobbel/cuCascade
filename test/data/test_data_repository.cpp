@@ -348,9 +348,13 @@ TEST_CASE("unique_data_repository Large Number of Batches", "[data_repository]")
 
   constexpr int num_batches = 10000;
 
+  // Share a single memory space across all mock representations to avoid
+  // exhausting CUDA resources (each memory_space creates a stream pool)
+  auto shared_space = test::make_mock_memory_space(memory::Tier::GPU, 0);
+
   // Add many batches
   for (int i = 0; i < num_batches; ++i) {
-    auto data  = std::make_unique<mock_data_representation>(memory::Tier::GPU, 1024);
+    auto data  = std::make_unique<mock_data_representation>(shared_space, 1024);
     auto batch = std::make_unique<data_batch>(i, std::move(data));
     repository.add_data_batch(std::move(batch));
   }

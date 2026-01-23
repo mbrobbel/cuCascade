@@ -38,7 +38,7 @@
 
 #include <rmm/cuda_stream.hpp>
 #include <rmm/device_buffer.hpp>
-#include <rmm/mr/device/cuda_memory_resource.hpp>
+#include <rmm/mr/cuda_memory_resource.hpp>
 
 #include <catch2/catch.hpp>
 
